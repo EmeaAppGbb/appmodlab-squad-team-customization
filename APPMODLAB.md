@@ -1,27 +1,19 @@
 ---
-lab_id: squad-team-customization
-title: "SQUAD Team Customization: Building Domain-Specific Development Agents"
-category: Agentic Software Development
-difficulty: intermediate
-duration: 3-4 hours
-technologies:
-  - GitHub Copilot
-  - SQUAD Framework
-  - Go
-  - YAML
-learning_objectives:
-  - Define custom SQUAD agents with specialized roles and skills
-  - Configure agent charters with domain-specific review criteria
-  - Set up custom ceremonies (standups, retrospectives, compliance reviews)
-  - Create domain-specific quality gates in the SQUAD workflow
-  - Test and validate custom agent behavior
-prerequisites:
-  - Completed "Getting Started with SQUAD" lab
-  - Basic Go language familiarity
-  - Understanding of YAML configuration
-  - GitHub Copilot access
-repository: https://github.com/EmeaAppGbb/appmodlab-squad-team-customization
-organization: EmeaAppGbb
+title: "SQUAD Team Customization"
+description: "Customize SQUAD with domain-specific agents, skills, and ceremonies"
+authors: ["marconsilva"]
+category: "Agentic Software Development"
+industry: "Healthcare & Life Sciences"
+services: []
+languages: ["TypeScript", "Python"]
+frameworks: ["Gin", "gRPC", "PostgreSQL", "Kubernetes"]
+modernizationTools: []
+agenticTools: ["SQUAD"]
+tags: ["healthcare", "HIPAA", "custom-agents", "compliance", "agent-customization"]
+extensions: ["github.copilot"]
+thumbnail: ""
+video: ""
+version: "1.0.0"
 ---
 
 # SQUAD Team Customization: Building Domain-Specific Development Agents
