@@ -1,0 +1,97 @@
+hipaa_compliance_checklist:
+  phi_exposure:
+    - rule: "No PHI in log.Info, log.Debug, log.Error"
+      severity: critical
+      pattern: 'log\.(Info|Debug|Error|Printf).*patient\.(Name|FirstName|LastName|SSN|DOB|MRN)'
+      suggestion: "Use patient ID instead: log.Info(\"Patient action\", \"patient_id\", patient.ID)"
+      
+    - rule: "No PHI in HTTP error responses"
+      severity: critical
+      pattern: 'c\.JSON.*patient\.(Name|FirstName|LastName|SSN|DOB)'
+      suggestion: "Return patient ID only in error responses"
+      
+    - rule: "No PHI in metrics or telemetry"
+      severity: critical
+      pattern: 'metrics\.Record.*patient\.(Name|SSN|DOB)'
+      reason: "PHI must not be sent to observability platforms"
+      
+    - rule: "No SSN in API responses"
+      severity: critical
+      check: "SSN field should be omitted or redacted in responses"
+      
+  encryption:
+    - rule: "Database connections must use SSL"
+      severity: critical
+      check: "connection string contains sslmode=require"
+      file_pattern: "**/*.go"
+      
+    - rule: "API must enforce TLS 1.2+"
+      severity: critical
+      check: "TLS config set to minimum TLS 1.2"
+      file_pattern: "**/main.go"
+      
+    - rule: "PHI fields should be encrypted at rest"
+      severity: high
+      check: "Database encryption enabled for PHI columns"
+      applies_to: ["ssn", "diagnosis_code", "notes"]
+      
+  audit_logging:
+    - rule: "PHI access must be logged"
+      severity: high
+      pattern: '(GetPatient|CreatePatient|UpdatePatient).*audit\.Log'
+      suggestion: "Add audit log: audit.Log(userID, \"PHI_ACCESS\", patientID)"
+      
+    - rule: "Audit logs must include user ID and timestamp"
+      severity: high
+      check: "audit log contains userID and timestamp fields"
+      
+    - rule: "Failed access attempts must be logged"
+      severity: medium
+      check: "error cases include audit logging"
+      
+  access_control:
+    - rule: "PHI endpoints require authentication"
+      severity: critical
+      check: "middleware includes auth.RequireToken or similar"
+      file_pattern: "cmd/**/*.go"
+      
+    - rule: "Role-based access enforced"
+      severity: high
+      check: "authorization middleware present on PHI routes"
+      
+    - rule: "Minimum necessary data returned"
+      severity: medium
+      check: "API responses don't include unnecessary PHI fields"
+      suggestion: "Remove SSN, address, and other non-essential PHI from responses"
+      
+  data_handling:
+    - rule: "No PHI in temporary files"
+      severity: high
+      pattern: 'ioutil\.WriteFile.*patient'
+      suggestion: "Avoid writing PHI to disk; use encrypted storage"
+      
+    - rule: "No PHI in URLs or query parameters"
+      severity: critical
+      pattern: '\?.*patient_name|patient_ssn'
+      suggestion: "Use patient ID in URLs, not PHI"
+      
+    - rule: "Proper error handling for PHI operations"
+      severity: medium
+      check: "PHI operations have comprehensive error handling"
+
+validation_levels:
+  critical:
+    action: block_merge
+    notification: immediate
+    
+  high:
+    action: require_review
+    notification: within_24h
+    
+  medium:
+    action: warn
+    notification: next_review
+    
+  low:
+    action: inform
+    notification: optional

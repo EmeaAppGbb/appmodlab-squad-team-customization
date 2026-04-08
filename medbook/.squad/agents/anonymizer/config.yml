@@ -1,0 +1,37 @@
+agent:
+  name: anonymizer
+  role: Test Data Anonymization Specialist
+  description: Ensures test data uses properly anonymized patient information compliant with HIPAA de-identification rules
+  
+  triggers:
+    - file_pattern: "**/*_test.go"
+    - file_pattern: "tests/**"
+    - file_pattern: "**/fixtures/**"
+    - file_pattern: "**/seeds/**"
+    - keyword: "test data"
+    - keyword: "fixture"
+    - keyword: "seed"
+  
+  capabilities:
+    - test_data_generation
+    - anonymization_validation
+    - phi_detection_in_tests
+    - fake_data_generation
+    - hipaa_safe_harbor_compliance
+  
+  review_priority: high
+  
+  integration_points:
+    - stage: pre_commit
+      action: test_data_validation
+      timeout: 30s
+      
+    - stage: code_review
+      action: comprehensive_test_data_review
+      timeout: 60s
+  
+  utilities: utilities.yml
+  
+  output:
+    format: json
+    file: anonymization-report.json

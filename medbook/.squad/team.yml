@@ -1,0 +1,134 @@
+squad_team:
+  name: medbook-healthcare-team
+  version: 2.0.0
+  description: Custom SQUAD team for healthcare development with HIPAA compliance and domain-specific agents
+  
+  agents:
+    # Standard SQUAD agents
+    - name: brain
+      enabled: true
+      role: Architect & Planner
+      config: agents/brain/config.yml
+      charter: agents/brain/charter.md
+      
+    - name: eyes
+      enabled: true
+      role: Code Reviewer
+      config: agents/eyes/config.yml
+      charter: agents/eyes/charter.md
+      
+    - name: hands
+      enabled: true
+      role: Implementation Engineer
+      config: agents/hands/config.yml
+      charter: agents/hands/charter.md
+      
+    - name: mouth
+      enabled: true
+      role: Documentation Specialist
+      config: agents/mouth/config.yml
+      charter: agents/mouth/charter.md
+      
+    # Custom healthcare-specific agents
+    - name: hipaa-compliance
+      enabled: true
+      role: HIPAA Compliance Reviewer
+      config: agents/hipaa-compliance/config.yml
+      charter: agents/hipaa-compliance/charter.md
+      custom: true
+      
+    - name: terminology
+      enabled: true
+      role: Healthcare Terminology Validator
+      config: agents/terminology/config.yml
+      charter: agents/terminology/charter.md
+      custom: true
+      
+    - name: anonymizer
+      enabled: true
+      role: Test Data Anonymization Specialist
+      config: agents/anonymizer/config.yml
+      charter: agents/anonymizer/charter.md
+      custom: true
+  
+  quality_gates:
+    pre_commit:
+      - agent: hipaa-compliance
+        check: phi_exposure_scan
+        required: true
+        description: "Scan for PHI exposure in code changes"
+        
+      - agent: anonymizer
+        check: test_data_validation
+        required: true
+        description: "Validate test data is properly anonymized"
+        
+    code_review:
+      - agent: eyes
+        check: standard_review
+        required: true
+        description: "Standard code quality review"
+        
+      - agent: hipaa-compliance
+        check: compliance_review
+        required: true
+        blocking: true
+        description: "HIPAA compliance validation (blocking)"
+        
+      - agent: terminology
+        check: terminology_validation
+        required: true
+        description: "Healthcare terminology and coding standards"
+        
+    pre_merge:
+      - agent: hipaa-compliance
+        check: final_compliance_check
+        required: true
+        blocking: true
+        description: "Final HIPAA compliance verification"
+        
+      - agent: brain
+        check: architecture_approval
+        required: true
+        description: "Architecture and design approval"
+  
+  workflows:
+    feature_development:
+      description: "Standard feature development workflow"
+      stages:
+        - name: planning
+          agents: [brain, hipaa-compliance]
+          description: "Plan feature with compliance considerations"
+          
+        - name: implementation
+          agents: [hands, terminology]
+          description: "Implement with proper terminology"
+          
+        - name: review
+          agents: [eyes, hipaa-compliance, terminology]
+          description: "Code review with compliance and terminology checks"
+          
+        - name: documentation
+          agents: [mouth]
+          description: "Document the feature"
+          
+    hotfix:
+      description: "Emergency hotfix workflow"
+      fast_track: true
+      required_agents: [hands, eyes, hipaa-compliance]
+      stages:
+        - name: implementation_and_review
+          agents: [hands, eyes, hipaa-compliance]
+          description: "Fast-tracked implementation with mandatory compliance"
+      
+  ceremonies:
+    config: ceremonies/ceremonies.yml
+    enabled: true
+    
+  integrations:
+    ci_cd:
+      github_actions: true
+      required_checks:
+        - hipaa-compliance
+        - terminology-validation
+        - test-data-anonymization

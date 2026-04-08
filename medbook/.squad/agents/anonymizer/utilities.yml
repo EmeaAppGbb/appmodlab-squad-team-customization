@@ -1,0 +1,180 @@
+anonymization_utilities:
+  fake_patient_generator:
+    name:
+      pattern: "Test {FirstName} {LastName}"
+      library: "faker"
+      prefix_required: "Test "
+      examples:
+        - "Test John Smith"
+        - "Test Mary Johnson"
+      
+    mrn:
+      pattern: "MRN-T{7_digits}"
+      example: "MRN-T1234567"
+      validation: "Must include 'T' marker after MRN- prefix"
+      
+    ssn:
+      pattern: "000-00-{4_digits}"
+      example: "000-00-1234"
+      reason: "000-00 prefix ensures SSN is clearly fake (invalid format)"
+      
+    dob:
+      method: "random_date_in_range"
+      range_start: "1940-01-01"
+      range_end: "2005-12-31"
+      format: "YYYY-MM-DD"
+      example: "1975-06-15"
+      
+    phone:
+      pattern: "(555) 01{2_digits}"
+      range: "(555) 0100 - (555) 0199"
+      example: "(555) 0145"
+      reason: "555-01XX is reserved range for fictional use"
+      
+    email:
+      pattern: "patient.test{random_number}@example.com"
+      domain: "example.com"
+      example: "patient.test1234@example.com"
+      reason: "example.com is reserved for documentation and testing"
+      
+    address:
+      pattern: "{number} Test Street, Anytown, {state} {zip}"
+      examples:
+        - "123 Test Street, Anytown, NY 10001"
+        - "456 Example Avenue, Springfield, CA 90210"
+      requirement: "Use 'Test' or 'Example' in street names"
+      
+  fake_appointment_generator:
+    diagnosis_code:
+      safe_codes:
+        - code: "Z00.00"
+          description: "General adult medical exam without abnormal findings"
+        - code: "E11.9"
+          description: "Type 2 diabetes mellitus without complications"
+        - code: "I10"
+          description: "Essential hypertension"
+        - code: "Z23"
+          description: "Encounter for immunization"
+      avoid:
+        - "Rare diagnosis codes"
+        - "Stigmatizing conditions"
+        - "Highly specific diagnoses"
+        
+    procedure_code:
+      safe_codes:
+        - code: "99213"
+          description: "Office/outpatient visit, established patient"
+        - code: "99214"
+          description: "Office/outpatient visit, established patient (moderate)"
+        - code: "80053"
+          description: "Comprehensive metabolic panel"
+        - code: "36415"
+          description: "Routine venipuncture"
+          
+  validation_checks:
+    - name: "No real SSNs"
+      pattern: '^(?!000)(?!666)(?!9)\d{3}-(?!00)\d{2}-(?!0000)\d{4}$'
+      action: "reject_if_valid_real_ssn"
+      severity: critical
+      message: "Test data contains a potentially real SSN. Use 000-00-XXXX format."
+      
+    - name: "No real names"
+      check: "name must start with 'Test '"
+      severity: high
+      message: "Patient names in test data should start with 'Test ' prefix"
+      suggestion: "Use: 'Test John Smith' instead of 'John Smith'"
+      
+    - name: "Test MRN prefix"
+      check: "mrn must start with 'MRN-T'"
+      pattern: '^MRN-T\d{7}$'
+      severity: high
+      message: "Test MRNs must use format: MRN-T#######"
+      
+    - name: "Phone in test range"
+      pattern: '^\(555\) 01\d{2}$'
+      severity: medium
+      message: "Use (555) 01XX range for test phone numbers"
+      
+    - name: "Email uses test domain"
+      check: "email must end with '@example.com' or '@test.example.com'"
+      severity: medium
+      message: "Use @example.com domain for test email addresses"
+      
+    - name: "No real addresses"
+      check: "address should contain 'Test' or 'Example'"
+      severity: low
+      message: "Consider using 'Test Street' or 'Example Avenue' in addresses"
+      
+  code_templates:
+    go_patient_generator: |
+      func GenerateTestPatient() Patient {
+          return Patient{
+              MRN:       fmt.Sprintf("MRN-T%07d", rand.Intn(10000000)),
+              FirstName: "Test " + faker.FirstName(),
+              LastName:  faker.LastName(),
+              DOB:       faker.DateBetween(time.Date(1940, 1, 1), time.Date(2005, 12, 31)),
+              SSN:       fmt.Sprintf("000-00-%04d", rand.Intn(10000)),
+              Email:     fmt.Sprintf("patient.test%d@example.com", rand.Intn(100000)),
+              Phone:     fmt.Sprintf("(555) 01%02d", rand.Intn(100)),
+              Address:   fmt.Sprintf("%d Test Street, Anytown, NY %05d", 
+                          rand.Intn(9999)+1, rand.Intn(90000)+10000),
+          }
+      }
+      
+    go_appointment_generator: |
+      func GenerateTestAppointment(patientID, providerID string) Appointment {
+          return Appointment{
+              PatientID:       patientID,
+              ProviderID:      providerID,
+              AppointmentTime: faker.FutureDate(30),
+              DiagnosisCode:   "Z00.00", // General exam
+              ProcedureCode:   "99213",  // Office visit
+              Status:          "scheduled",
+              Notes:           "Test appointment - routine checkup",
+          }
+      }
+
+  hipaa_safe_harbor_identifiers:
+    - identifier: "Names"
+      rule: "Use 'Test ' prefix for all names"
+      
+    - identifier: "Geographic subdivisions smaller than state"
+      rule: "Use generic city names like 'Anytown', 'Springfield'"
+      
+    - identifier: "Dates (except year)"
+      rule: "Use date shifting or generic dates"
+      
+    - identifier: "Telephone numbers"
+      rule: "Use (555) 01XX range"
+      
+    - identifier: "Email addresses"
+      rule: "Use @example.com domain"
+      
+    - identifier: "SSN"
+      rule: "Use 000-00-XXXX format"
+      
+    - identifier: "MRN"
+      rule: "Use MRN-T####### format with T marker"
+      
+    - identifier: "IP addresses"
+      rule: "Use reserved ranges: 192.0.2.x, 198.51.100.x, 203.0.113.x"
+
+  best_practices:
+    - practice: "Use consistent fake data generation libraries"
+      reason: "Ensures reproducible and realistic test data"
+      
+    - practice: "Clearly mark all test data"
+      reason: "Prevents confusion with production data"
+      examples:
+        - "Prefix names with 'Test '"
+        - "Add 'T' to MRNs"
+        - "Use 000-00 for SSNs"
+        
+    - practice: "Use non-sensitive diagnosis codes"
+      reason: "Avoid stigmatizing conditions in examples"
+      
+    - practice: "Document test data generation"
+      reason: "Help other developers create compliant test data"
+      
+    - practice: "Validate test data in CI/CD"
+      reason: "Catch real PHI before it reaches production"

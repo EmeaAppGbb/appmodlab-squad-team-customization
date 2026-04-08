@@ -1,0 +1,199 @@
+ceremonies:
+  - name: weekly-hipaa-review
+    type: compliance_review
+    frequency: weekly
+    day: friday
+    time: "15:00"
+    duration: 30_minutes
+    
+    description: "Weekly review of HIPAA compliance across merged PRs and ongoing work"
+    
+    participants:
+      required:
+        - hipaa-compliance
+        - eyes
+        - brain
+      optional:
+        - hands
+        - mouth
+    
+    agenda:
+      - item: "Review PHI handling in merged PRs"
+        duration: 15_minutes
+        owner: hipaa-compliance
+        
+      - item: "Discuss new compliance requirements"
+        duration: 5_minutes
+        owner: brain
+        
+      - item: "Update HIPAA checklist if needed"
+        duration: 5_minutes
+        owner: hipaa-compliance
+        
+      - item: "Share compliance findings and lessons learned"
+        duration: 5_minutes
+        owner: eyes
+      
+    artifacts:
+      - name: "compliance_report.md"
+        template: "templates/weekly-hipaa-review.md"
+      - name: "action_items.yml"
+        
+  - name: sprint-planning-with-compliance
+    type: sprint_planning
+    frequency: biweekly
+    day: monday
+    time: "09:00"
+    duration: 2_hours
+    
+    description: "Sprint planning that includes HIPAA compliance and healthcare terminology considerations"
+    
+    participants:
+      required:
+        - brain
+        - hipaa-compliance
+        - terminology
+        - hands
+      optional:
+        - eyes
+        - mouth
+        - anonymizer
+    
+    agenda:
+      - item: "Review product backlog"
+        duration: 30_minutes
+        owner: brain
+        
+      - item: "Identify PHI-touching features"
+        duration: 20_minutes
+        owner: hipaa-compliance
+        
+      - item: "Estimate compliance overhead"
+        duration: 20_minutes
+        owner: brain
+        
+      - item: "Plan HIPAA reviews for high-risk features"
+        duration: 20_minutes
+        owner: hipaa-compliance
+        
+      - item: "Assign compliance checkpoints"
+        duration: 20_minutes
+        owner: brain
+        
+      - item: "Discuss healthcare terminology requirements"
+        duration: 10_minutes
+        owner: terminology
+        
+    output:
+      - "sprint_plan.md"
+      - "compliance_checkpoint_schedule.yml"
+      
+  - name: daily-standup-healthcare
+    type: standup
+    frequency: daily
+    time: "09:30"
+    duration: 15_minutes
+    
+    description: "Daily standup with healthcare-specific blocker discussion"
+    
+    participants:
+      required:
+        - all_agents
+    
+    format:
+      - question: "What did you complete yesterday?"
+        time: 5_minutes
+        
+      - question: "What will you work on today?"
+        time: 5_minutes
+        
+      - question: "Any compliance blockers?"
+        time: 2_minutes
+        
+      - question: "Any terminology questions?"
+        time: 2_minutes
+        
+      - question: "Any other blockers?"
+        time: 1_minute
+        
+  - name: retrospective-with-compliance
+    type: retrospective
+    frequency: biweekly
+    day: friday
+    time: "14:00"
+    duration: 1_hour
+    
+    description: "Sprint retrospective with focus on compliance and healthcare quality"
+    
+    participants:
+      required:
+        - all_agents
+    
+    topics:
+      - topic: "What went well?"
+        duration: 15_minutes
+        
+      - topic: "What could be improved?"
+        duration: 15_minutes
+        
+      - topic: "HIPAA compliance challenges"
+        duration: 10_minutes
+        owner: hipaa-compliance
+        
+      - topic: "Terminology standardization wins"
+        duration: 10_minutes
+        owner: terminology
+        
+      - topic: "Action items for next sprint"
+        duration: 10_minutes
+        owner: brain
+        
+    output:
+      - "retrospective_notes.md"
+      - "action_items.yml"
+      
+  - name: monthly-compliance-audit
+    type: audit
+    frequency: monthly
+    day: first_monday
+    time: "10:00"
+    duration: 1_hour
+    
+    description: "Monthly comprehensive HIPAA compliance audit"
+    
+    participants:
+      required:
+        - hipaa-compliance
+        - brain
+        - eyes
+      optional:
+        - all_agents
+    
+    scope:
+      - "Review all merged code from past month"
+      - "Audit logging completeness"
+      - "Encryption implementation review"
+      - "Access control validation"
+      - "PHI exposure scan across codebase"
+      
+    deliverables:
+      - "monthly_compliance_report.pdf"
+      - "compliance_scorecard.yml"
+      - "remediation_plan.md"
+
+ceremony_settings:
+  timezone: "UTC"
+  
+  notifications:
+    slack_channel: "#medbook-squad"
+    reminder_before: 1_hour
+    
+  recording:
+    enabled: true
+    retention: 90_days
+    
+  attendance_required: true
+  
+  skip_policy:
+    max_consecutive_skips: 2
+    notification_on_skip: true

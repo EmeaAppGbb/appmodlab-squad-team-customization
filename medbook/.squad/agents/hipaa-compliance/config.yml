@@ -1,0 +1,51 @@
+agent:
+  name: hipaa-compliance
+  role: HIPAA Compliance Reviewer
+  description: Ensures code changes comply with HIPAA regulations for PHI handling
+  
+  triggers:
+    - file_pattern: "internal/patient/**"
+    - file_pattern: "internal/appointment/**"
+    - file_pattern: "internal/provider/**"
+    - file_pattern: "proto/**"
+    - file_pattern: "**/*_test.go"
+    - keyword: "PHI"
+    - keyword: "patient"
+    - keyword: "diagnosis"
+    - keyword: "SSN"
+    - keyword: "MRN"
+    exclude:
+      - "**/*.pb.go"  # Exclude generated protobuf code
+  
+  capabilities:
+    - hipaa_privacy_rule_validation
+    - phi_exposure_detection
+    - encryption_verification
+    - audit_logging_validation
+    - access_control_review
+    - minimum_necessary_check
+  
+  review_priority: critical
+  
+  integration_points:
+    - stage: pre_commit
+      action: validate_phi_handling
+      timeout: 30s
+      
+    - stage: code_review
+      action: hipaa_compliance_check
+      timeout: 120s
+      
+    - stage: pre_merge
+      action: require_approval
+      blocking: true
+      
+  checklist: checklist.yml
+  
+  output:
+    format: json
+    file: compliance-report.json
+    include:
+      - violations
+      - warnings
+      - recommendations

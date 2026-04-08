@@ -1,0 +1,12 @@
+agent:
+  name: hands
+  role: Implementation Engineer
+  description: Feature implementation and code development
+  
+  capabilities:
+    - code_implementation
+    - refactoring
+    - bug_fixing
+    - test_writing
+    
+  review_priority: medium

@@ -1,0 +1,39 @@
+agent:
+  name: terminology
+  role: Healthcare Terminology Validator
+  description: Validates healthcare terminology, medical coding standards, and field naming conventions
+  
+  triggers:
+    - file_pattern: "proto/**"
+    - file_pattern: "internal/**/*.go"
+    - file_pattern: "**/*_test.go"
+    - keyword: "diagnosis"
+    - keyword: "procedure"
+    - keyword: "icd"
+    - keyword: "cpt"
+    - keyword: "appointment"
+    - keyword: "provider"
+  
+  capabilities:
+    - icd10_validation
+    - cpt_code_validation
+    - field_naming_validation
+    - medical_terminology_review
+    - healthcare_standards_enforcement
+  
+  review_priority: high
+  
+  integration_points:
+    - stage: code_review
+      action: terminology_validation
+      timeout: 60s
+      
+    - stage: pre_commit
+      action: quick_terminology_check
+      timeout: 20s
+  
+  validation_rules: validation-rules.yml
+  
+  output:
+    format: json
+    file: terminology-report.json

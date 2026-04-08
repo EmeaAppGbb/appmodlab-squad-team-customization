@@ -9,9 +9,10 @@ obj/
 .vscode/
 
 ## SQUAD
-.squad/
-agents/
-ceremonies/
+# Only ignore SQUAD runtime outputs, not configuration
+.squad/outputs/
+.squad/logs/
+.squad/*.json
 
 ## Healthcare
 phi-data/

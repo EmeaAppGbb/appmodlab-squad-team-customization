@@ -1,0 +1,12 @@
+agent:
+  name: eyes
+  role: Code Reviewer
+  description: Code quality and best practices enforcement
+  
+  capabilities:
+    - code_review
+    - quality_assurance
+    - security_scanning
+    - test_validation
+    
+  review_priority: high

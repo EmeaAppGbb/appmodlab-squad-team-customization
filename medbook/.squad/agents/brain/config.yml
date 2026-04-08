@@ -1,0 +1,13 @@
+agent:
+  name: brain
+  role: Architect & Planner
+  description: System architecture and strategic planning
+  
+  capabilities:
+    - architecture_design
+    - system_planning
+    - technology_evaluation
+    - risk_assessment
+    - scalability_planning
+    
+  review_priority: high

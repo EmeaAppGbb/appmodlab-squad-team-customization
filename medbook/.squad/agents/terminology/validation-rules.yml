@@ -1,0 +1,179 @@
+terminology_validation:
+  icd10_codes:
+    pattern: '^[A-Z][0-9]{2}(\.[0-9]{1,4})?$'
+    examples:
+      valid: 
+        - "E11.9"   # Type 2 diabetes without complications
+        - "I10"     # Essential hypertension
+        - "J44.0"   # COPD with acute lower respiratory infection
+        - "Z00.00"  # General adult medical exam
+      invalid: 
+        - "E11"     # Missing specificity
+        - "999"     # Must start with letter
+        - "ABC123"  # Invalid format
+    description: "ICD-10 codes: Letter + 2 digits + optional decimal + up to 4 digits"
+    severity: high
+    
+  cpt_codes:
+    pattern: '^\d{5}$'
+    examples:
+      valid: 
+        - "99213"   # Office visit, established patient
+        - "80053"   # Comprehensive metabolic panel
+        - "36415"   # Routine venipuncture
+      invalid: 
+        - "9921"    # Too few digits
+        - "ABC12"   # Contains letters
+    description: "CPT codes: exactly 5 digits"
+    severity: high
+    
+  medical_record_number:
+    pattern: '^MRN-\d{8}$'
+    examples:
+      valid: 
+        - "MRN-12345678"
+      invalid: 
+        - "12345678"   # Missing prefix
+        - "MRN123"     # Too few digits
+    description: "MRN format: MRN- prefix + 8 digits"
+    severity: medium
+    
+  national_provider_identifier:
+    pattern: '^\d{10}$'
+    examples:
+      valid:
+        - "1234567890"
+      invalid:
+        - "123456789"   # Too few digits
+        - "NPI1234567"  # Contains letters
+    description: "NPI: exactly 10 digits"
+    severity: high
+    
+  field_naming_standards:
+    patient_identifier:
+      preferred: 
+        - "patient_id"
+        - "mrn"
+        - "medical_record_number"
+      avoid: 
+        - "user_id"
+        - "person_id"
+        - "client_id"
+      reason: "Use healthcare-specific terminology for patient identifiers"
+      severity: medium
+      
+    diagnosis:
+      preferred: 
+        - "diagnosis_code"
+        - "icd10_code"
+        - "primary_diagnosis"
+        - "secondary_diagnosis"
+      avoid: 
+        - "problem"
+        - "condition_id"
+        - "disease_code"
+      reason: "Use standard medical terminology for diagnosis"
+      severity: high
+      
+    provider:
+      preferred: 
+        - "provider_id"
+        - "npi"
+        - "healthcare_provider"
+        - "attending_provider"
+      avoid: 
+        - "doctor_id"
+        - "physician_id"
+        - "practitioner"
+      reason: "'Provider' is the standard term in healthcare systems"
+      severity: medium
+      
+    appointment:
+      preferred: 
+        - "appointment_datetime"
+        - "scheduled_at"
+        - "appointment_time"
+        - "visit_datetime"
+      avoid: 
+        - "appt_time"
+        - "booking_date"
+        - "visit_time"
+      reason: "Use full, clear names for appointment scheduling"
+      severity: low
+      
+    procedure:
+      preferred:
+        - "procedure_code"
+        - "cpt_code"
+        - "treatment_code"
+      avoid:
+        - "service_id"
+        - "treatment_type"
+        - "operation_code"
+      reason: "Use CPT terminology for procedures"
+      severity: high
+      
+    status_values:
+      appointment_status:
+        valid:
+          - "scheduled"
+          - "confirmed"
+          - "checked_in"
+          - "in_progress"
+          - "completed"
+          - "cancelled"
+          - "no_show"
+        invalid:
+          - "active"
+          - "done"
+          - "finished"
+        reason: "Use healthcare-specific appointment status values"
+        
+  medical_terminology:
+    spelling_dictionary:
+      correct:
+        - "healthcare"
+        - "diagnosis"
+        - "procedure"
+        - "appointment"
+        - "patient"
+        - "provider"
+        - "prescription"
+      incorrect_variations:
+        - "health care" # Should be one word
+        - "diagnoses" # Plural of diagnosis is diagnoses, but check context
+        
+  date_time_formats:
+    preferred:
+      - format: "ISO 8601"
+        example: "2024-01-15T14:30:00Z"
+        reason: "Standard for healthcare data exchange"
+      - format: "FHIR DateTime"
+        example: "2024-01-15T14:30:00+00:00"
+        reason: "HL7 FHIR standard"
+    avoid:
+      - format: "MM/DD/YYYY"
+        reason: "Ambiguous for international users"
+      - format: "YYYY-MM-DD HH:MM:SS"
+        reason: "Use ISO 8601 with timezone"
+
+validation_actions:
+  icd10_invalid:
+    severity: high
+    action: "Flag for review"
+    message: "ICD-10 code format is invalid. Must be: Letter + 2 digits + optional decimal + 1-4 digits"
+    
+  cpt_invalid:
+    severity: high
+    action: "Flag for review"
+    message: "CPT code must be exactly 5 digits"
+    
+  field_naming_non_standard:
+    severity: medium
+    action: "Suggest improvement"
+    message: "Consider using healthcare-standard field name"
+    
+  mrn_invalid:
+    severity: medium
+    action: "Flag for review"
+    message: "MRN format should be: MRN-########"

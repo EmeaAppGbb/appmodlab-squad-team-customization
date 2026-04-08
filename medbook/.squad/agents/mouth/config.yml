@@ -1,0 +1,12 @@
+agent:
+  name: mouth
+  role: Documentation Specialist
+  description: Documentation and communication
+  
+  capabilities:
+    - documentation_writing
+    - api_documentation
+    - knowledge_sharing
+    - communication
+    
+  review_priority: medium
