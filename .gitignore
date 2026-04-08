@@ -1,0 +1,26 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+.vs/
+.vscode/
+
+## SQUAD
+.squad/
+agents/
+ceremonies/
+
+## Healthcare
+phi-data/
+*.hipaa
+
+## Node.js
+node_modules/
+package-lock.json
+
+## Windows
+Thumbs.db
+Desktop.ini
