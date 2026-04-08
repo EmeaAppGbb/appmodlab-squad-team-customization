@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package medbook.appointment;
+
+option go_package = "github.com/emeaappgbb/medbook/proto/appointment";
+
+import "google/protobuf/timestamp.proto";
+
+service AppointmentService {
+  rpc GetAppointment(GetAppointmentRequest) returns (AppointmentResponse);
+  rpc CreateAppointment(CreateAppointmentRequest) returns (AppointmentResponse);
+  rpc CancelAppointment(CancelAppointmentRequest) returns (AppointmentResponse);
+  rpc ListPatientAppointments(ListPatientAppointmentsRequest) returns (ListAppointmentsResponse);
+}
+
+message Appointment {
+  string id = 1;
+  string patient_id = 2;
+  string provider_id = 3;
+  google.protobuf.Timestamp appointment_time = 4;
+  string diagnosis_code = 5; // ICD-10 code
+  string procedure_code = 6; // CPT code
+  string status = 7;
+  string notes = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message GetAppointmentRequest {
+  string id = 1;
+}
+
+message CreateAppointmentRequest {
+  string patient_id = 1;
+  string provider_id = 2;
+  google.protobuf.Timestamp appointment_time = 3;
+  string diagnosis_code = 4;
+  string procedure_code = 5;
+  string notes = 6;
+}
+
+message CancelAppointmentRequest {
+  string id = 1;
+  string reason = 2;
+}
+
+message AppointmentResponse {
+  Appointment appointment = 1;
+}
+
+message ListPatientAppointmentsRequest {
+  string patient_id = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListAppointmentsResponse {
+  repeated Appointment appointments = 1;
+  string next_page_token = 2;
+}

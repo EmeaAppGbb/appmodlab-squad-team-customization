@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package medbook.patient;
+
+option go_package = "github.com/emeaappgbb/medbook/proto/patient";
+
+import "google/protobuf/timestamp.proto";
+
+service PatientService {
+  rpc GetPatient(GetPatientRequest) returns (PatientResponse);
+  rpc CreatePatient(CreatePatientRequest) returns (PatientResponse);
+  rpc UpdatePatient(UpdatePatientRequest) returns (PatientResponse);
+  rpc ListPatients(ListPatientsRequest) returns (ListPatientsResponse);
+}
+
+message Patient {
+  string id = 1;
+  string mrn = 2; // Medical Record Number
+  string first_name = 3;
+  string last_name = 4;
+  google.protobuf.Timestamp date_of_birth = 5;
+  string email = 6;
+  string phone = 7;
+  string address = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message GetPatientRequest {
+  string id = 1;
+}
+
+message CreatePatientRequest {
+  string mrn = 1;
+  string first_name = 2;
+  string last_name = 3;
+  google.protobuf.Timestamp date_of_birth = 4;
+  string ssn = 5; // PHI - should be encrypted
+  string email = 6;
+  string phone = 7;
+  string address = 8;
+}
+
+message UpdatePatientRequest {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string phone = 5;
+  string address = 6;
+}
+
+message PatientResponse {
+  Patient patient = 1;
+}
+
+message ListPatientsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListPatientsResponse {
+  repeated Patient patients = 1;
+  string next_page_token = 2;
+}

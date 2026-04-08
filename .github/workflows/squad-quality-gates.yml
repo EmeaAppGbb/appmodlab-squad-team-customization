@@ -1,0 +1,130 @@
+name: SQUAD Quality Gates
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'medbook/**'
+  push:
+    branches: [ main ]
+
+jobs:
+  hipaa-compliance:
+    name: HIPAA Compliance Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Copilot CLI
+        uses: github/copilot-cli-action@v1
+        
+      - name: Run HIPAA Compliance Agent
+        run: |
+          cd medbook
+          copilot squad run \
+            --agent hipaa-compliance \
+            --check compliance_review \
+            --output .squad/outputs/compliance-report.json
+        continue-on-error: false
+            
+      - name: Upload Compliance Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: hipaa-compliance-report
+          path: medbook/.squad/outputs/compliance-report.json
+          retention-days: 30
+          
+      - name: Check for Critical Violations
+        run: |
+          cd medbook
+          if [ ! -f .squad/outputs/compliance-report.json ]; then
+            echo "❌ Compliance report not generated"
+            exit 1
+          fi
+          
+          VIOLATIONS=$(jq '.violations | length' .squad/outputs/compliance-report.json 2>/dev/null || echo "0")
+          
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo "❌ HIPAA compliance violations found: $VIOLATIONS"
+            echo ""
+            echo "Violations:"
+            jq '.violations' .squad/outputs/compliance-report.json
+            exit 1
+          fi
+          
+          echo "✅ No HIPAA compliance violations found"
+          
+  terminology-validation:
+    name: Healthcare Terminology Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Copilot CLI
+        uses: github/copilot-cli-action@v1
+        
+      - name: Run Terminology Agent
+        run: |
+          cd medbook
+          copilot squad run \
+            --agent terminology \
+            --check terminology_validation \
+            --output .squad/outputs/terminology-report.json
+            
+      - name: Upload Terminology Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: terminology-report
+          path: medbook/.squad/outputs/terminology-report.json
+          retention-days: 30
+          
+  test-data-anonymization:
+    name: Validate Test Data Anonymization
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Copilot CLI
+        uses: github/copilot-cli-action@v1
+        
+      - name: Run Anonymizer Agent
+        run: |
+          cd medbook
+          copilot squad run \
+            --agent anonymizer \
+            --check test_data_validation \
+            --output .squad/outputs/anonymization-report.json
+            
+      - name: Upload Anonymization Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: anonymization-report
+          path: medbook/.squad/outputs/anonymization-report.json
+          retention-days: 30
+          
+      - name: Check for Real PHI in Tests
+        run: |
+          cd medbook
+          if [ ! -f .squad/outputs/anonymization-report.json ]; then
+            echo "⚠️ Anonymization report not generated"
+            exit 0
+          fi
+          
+          PHI_VIOLATIONS=$(jq '.phi_in_tests | length' .squad/outputs/anonymization-report.json 2>/dev/null || echo "0")
+          
+          if [ "$PHI_VIOLATIONS" -gt 0 ]; then
+            echo "❌ Potential real PHI found in test data: $PHI_VIOLATIONS instances"
+            jq '.phi_in_tests' .squad/outputs/anonymization-report.json
+            exit 1
+          fi
+          
+          echo "✅ All test data is properly anonymized"
