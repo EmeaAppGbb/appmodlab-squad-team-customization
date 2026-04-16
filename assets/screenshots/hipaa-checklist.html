@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HIPAA Compliance Checklist</title>
+<style>
+  body { margin: 0; padding: 0; background: #1e1e2e; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+  .header { background: linear-gradient(135deg, #313244, #45475a); border-radius: 10px 10px 0 0; padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #f38ba8; }
+  .dot-yellow { background: #f9e2af; }
+  .dot-green { background: #a6e3a1; }
+  .title { color: #cdd6f4; font-size: 13px; margin-left: 12px; }
+  .badge { background: #f38ba8; color: #1e1e2e; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: auto; font-weight: 700; }
+  pre { background: #1e1e2e; margin: 0; padding: 20px; border-radius: 0 0 10px 10px; overflow-x: auto; border: 1px solid #313244; border-top: none; line-height: 1.6; font-size: 13px; }
+  .key { color: #89b4fa; }
+  .str { color: #a6e3a1; }
+  .pattern { color: #f9e2af; font-family: inherit; }
+  .comment { color: #6c7086; font-style: italic; }
+  .section { color: #cba6f7; font-weight: bold; }
+  .severity-critical { color: #f38ba8; font-weight: bold; }
+  .severity-high { color: #fab387; font-weight: bold; }
+  .severity-medium { color: #f9e2af; }
+  .punctuation { color: #9399b2; }
+  .action { color: #89dceb; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <span class="dot dot-red"></span>
+  <span class="dot dot-yellow"></span>
+  <span class="dot dot-green"></span>
+  <span class="title">medbook/.squad/agents/hipaa-compliance/checklist.yml</span>
+  <span class="badge">🛡️ COMPLIANCE RULES</span>
+</div>
+<pre>
+<span class="section">hipaa_compliance_checklist</span><span class="punctuation">:</span>
+
+  <span class="section">phi_exposure</span><span class="punctuation">:</span>
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"No PHI in log.Info, log.Debug, log.Error"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-critical">critical</span>
+      <span class="key">pattern</span><span class="punctuation">:</span>  <span class="pattern">'log\.(Info|Debug|Error|Printf).*patient\.(Name|FirstName|LastName|SSN|DOB|MRN)'</span>
+      <span class="key">suggestion</span><span class="punctuation">:</span> <span class="str">"Use patient ID instead: log.Info(\"Patient action\", \"patient_id\", patient.ID)"</span>
+
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"No PHI in HTTP error responses"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-critical">critical</span>
+      <span class="key">pattern</span><span class="punctuation">:</span>  <span class="pattern">'c\.JSON.*patient\.(Name|FirstName|LastName|SSN|DOB)'</span>
+
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"No PHI in metrics or telemetry"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-critical">critical</span>
+      <span class="key">reason</span><span class="punctuation">:</span>  <span class="str">"PHI must not be sent to observability platforms"</span>
+
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"No SSN in API responses"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-critical">critical</span>
+
+  <span class="section">encryption</span><span class="punctuation">:</span>
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"Database connections must use SSL"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-critical">critical</span>
+      <span class="key">check</span><span class="punctuation">:</span>    <span class="str">"connection string contains sslmode=require"</span>
+
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"API must enforce TLS 1.2+"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-critical">critical</span>
+
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"PHI fields should be encrypted at rest"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-high">high</span>
+      <span class="key">applies_to</span><span class="punctuation">:</span> <span class="str">[ssn, diagnosis_code, notes]</span>
+
+  <span class="section">audit_logging</span><span class="punctuation">:</span>
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"PHI access must be logged"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-high">high</span>
+      <span class="key">suggestion</span><span class="punctuation">:</span> <span class="str">"Add: audit.Log(userID, \"PHI_ACCESS\", patientID)"</span>
+
+  <span class="section">access_control</span><span class="punctuation">:</span>
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"PHI endpoints require authentication"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-critical">critical</span>
+      <span class="key">check</span><span class="punctuation">:</span>    <span class="str">"middleware includes auth.RequireToken"</span>
+
+    <span class="punctuation">-</span> <span class="key">rule</span><span class="punctuation">:</span>     <span class="str">"Minimum necessary data returned"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-medium">medium</span>
+      <span class="key">suggestion</span><span class="punctuation">:</span> <span class="str">"Remove SSN, address from non-essential responses"</span>
+
+<span class="section">validation_levels</span><span class="punctuation">:</span>
+  <span class="severity-critical">critical</span><span class="punctuation">:</span>  <span class="key">action</span><span class="punctuation">:</span> <span class="action">block_merge</span>       <span class="key">notification</span><span class="punctuation">:</span> <span class="str">immediate</span>
+  <span class="severity-high">high</span><span class="punctuation">:</span>      <span class="key">action</span><span class="punctuation">:</span> <span class="action">require_review</span>   <span class="key">notification</span><span class="punctuation">:</span> <span class="str">within_24h</span>
+  <span class="severity-medium">medium</span><span class="punctuation">:</span>    <span class="key">action</span><span class="punctuation">:</span> <span class="action">warn</span>             <span class="key">notification</span><span class="punctuation">:</span> <span class="str">next_review</span>
+</pre>
+
+</div>
+</body>
+</html>

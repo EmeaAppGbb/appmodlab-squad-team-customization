@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>team.yml — SQUAD Team Configuration</title>
+<style>
+  body { margin: 0; padding: 0; background: #1e1e2e; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+  .header { background: linear-gradient(135deg, #313244, #45475a); border-radius: 10px 10px 0 0; padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #f38ba8; }
+  .dot-yellow { background: #f9e2af; }
+  .dot-green { background: #a6e3a1; }
+  .title { color: #cdd6f4; font-size: 13px; margin-left: 12px; }
+  .badge { background: #89b4fa; color: #1e1e2e; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: auto; font-weight: 700; }
+  pre { background: #1e1e2e; margin: 0; padding: 20px; border-radius: 0 0 10px 10px; overflow-x: auto; border: 1px solid #313244; border-top: none; line-height: 1.6; font-size: 13px; }
+  .key { color: #89b4fa; }
+  .str { color: #a6e3a1; }
+  .bool { color: #fab387; }
+  .comment { color: #6c7086; font-style: italic; }
+  .section { color: #cba6f7; font-weight: bold; }
+  .num { color: #f9e2af; }
+  .punctuation { color: #9399b2; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <span class="dot dot-red"></span>
+  <span class="dot dot-yellow"></span>
+  <span class="dot dot-green"></span>
+  <span class="title">medbook/.squad/team.yml</span>
+  <span class="badge">SQUAD CONFIG</span>
+</div>
+<pre>
+<span class="key">squad_team</span><span class="punctuation">:</span>
+  <span class="key">name</span><span class="punctuation">:</span> <span class="str">medbook-healthcare-team</span>
+  <span class="key">version</span><span class="punctuation">:</span> <span class="num">2.0.0</span>
+  <span class="key">description</span><span class="punctuation">:</span> <span class="str">Custom SQUAD team for healthcare development with HIPAA compliance</span>
+
+  <span class="section">agents</span><span class="punctuation">:</span>
+    <span class="comment"># Standard SQUAD agents</span>
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">brain</span>          <span class="key">role</span><span class="punctuation">:</span> <span class="str">Architect &amp; Planner</span>            <span class="key">enabled</span><span class="punctuation">:</span> <span class="bool">true</span>
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">eyes</span>           <span class="key">role</span><span class="punctuation">:</span> <span class="str">Code Reviewer</span>                  <span class="key">enabled</span><span class="punctuation">:</span> <span class="bool">true</span>
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">hands</span>          <span class="key">role</span><span class="punctuation">:</span> <span class="str">Implementation Engineer</span>         <span class="key">enabled</span><span class="punctuation">:</span> <span class="bool">true</span>
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">mouth</span>          <span class="key">role</span><span class="punctuation">:</span> <span class="str">Documentation Specialist</span>        <span class="key">enabled</span><span class="punctuation">:</span> <span class="bool">true</span>
+
+    <span class="comment"># ⚕️ Custom healthcare-specific agents</span>
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">hipaa-compliance</span>  <span class="key">role</span><span class="punctuation">:</span> <span class="str">HIPAA Compliance Reviewer</span>      <span class="key">custom</span><span class="punctuation">:</span> <span class="bool">true</span>
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">terminology</span>       <span class="key">role</span><span class="punctuation">:</span> <span class="str">Healthcare Terminology Validator</span> <span class="key">custom</span><span class="punctuation">:</span> <span class="bool">true</span>
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">anonymizer</span>        <span class="key">role</span><span class="punctuation">:</span> <span class="str">Test Data Anonymization</span>        <span class="key">custom</span><span class="punctuation">:</span> <span class="bool">true</span>
+
+  <span class="section">quality_gates</span><span class="punctuation">:</span>
+    <span class="key">pre_commit</span><span class="punctuation">:</span>
+      <span class="punctuation">-</span> <span class="key">agent</span><span class="punctuation">:</span> <span class="str">hipaa-compliance</span>   <span class="key">check</span><span class="punctuation">:</span> <span class="str">phi_exposure_scan</span>       <span class="key">required</span><span class="punctuation">:</span> <span class="bool">true</span>
+      <span class="punctuation">-</span> <span class="key">agent</span><span class="punctuation">:</span> <span class="str">anonymizer</span>          <span class="key">check</span><span class="punctuation">:</span> <span class="str">test_data_validation</span>    <span class="key">required</span><span class="punctuation">:</span> <span class="bool">true</span>
+    <span class="key">code_review</span><span class="punctuation">:</span>
+      <span class="punctuation">-</span> <span class="key">agent</span><span class="punctuation">:</span> <span class="str">eyes</span>               <span class="key">check</span><span class="punctuation">:</span> <span class="str">standard_review</span>         <span class="key">required</span><span class="punctuation">:</span> <span class="bool">true</span>
+      <span class="punctuation">-</span> <span class="key">agent</span><span class="punctuation">:</span> <span class="str">hipaa-compliance</span>   <span class="key">check</span><span class="punctuation">:</span> <span class="str">compliance_review</span>      <span class="key">blocking</span><span class="punctuation">:</span> <span class="bool">true</span>
+      <span class="punctuation">-</span> <span class="key">agent</span><span class="punctuation">:</span> <span class="str">terminology</span>        <span class="key">check</span><span class="punctuation">:</span> <span class="str">terminology_validation</span> <span class="key">required</span><span class="punctuation">:</span> <span class="bool">true</span>
+    <span class="key">pre_merge</span><span class="punctuation">:</span>
+      <span class="punctuation">-</span> <span class="key">agent</span><span class="punctuation">:</span> <span class="str">hipaa-compliance</span>   <span class="key">check</span><span class="punctuation">:</span> <span class="str">final_compliance_check</span> <span class="key">blocking</span><span class="punctuation">:</span> <span class="bool">true</span>
+      <span class="punctuation">-</span> <span class="key">agent</span><span class="punctuation">:</span> <span class="str">brain</span>              <span class="key">check</span><span class="punctuation">:</span> <span class="str">architecture_approval</span>  <span class="key">required</span><span class="punctuation">:</span> <span class="bool">true</span>
+
+  <span class="section">workflows</span><span class="punctuation">:</span>
+    <span class="key">feature_development</span><span class="punctuation">:</span>
+      <span class="key">stages</span><span class="punctuation">:</span> <span class="str">[planning, implementation, review, documentation]</span>
+    <span class="key">hotfix</span><span class="punctuation">:</span>
+      <span class="key">fast_track</span><span class="punctuation">:</span> <span class="bool">true</span>
+      <span class="key">required_agents</span><span class="punctuation">:</span> <span class="str">[hands, eyes, hipaa-compliance]</span>
+</pre>
+
+</div>
+</body>
+</html>

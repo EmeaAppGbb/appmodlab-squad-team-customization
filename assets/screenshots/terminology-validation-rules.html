@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Terminology Validation Rules</title>
+<style>
+  body { margin: 0; padding: 0; background: #1e1e2e; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+  .header { background: linear-gradient(135deg, #313244, #45475a); border-radius: 10px 10px 0 0; padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #f38ba8; }
+  .dot-yellow { background: #f9e2af; }
+  .dot-green { background: #a6e3a1; }
+  .title { color: #cdd6f4; font-size: 13px; margin-left: 12px; }
+  .badge { background: #a6e3a1; color: #1e1e2e; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: auto; font-weight: 700; }
+  pre { background: #1e1e2e; margin: 0; padding: 20px; border-radius: 0 0 10px 10px; overflow-x: auto; border: 1px solid #313244; border-top: none; line-height: 1.6; font-size: 13px; }
+  .key { color: #89b4fa; }
+  .str { color: #a6e3a1; }
+  .pattern { color: #f9e2af; }
+  .comment { color: #6c7086; font-style: italic; }
+  .section { color: #cba6f7; font-weight: bold; }
+  .good { color: #a6e3a1; }
+  .bad { color: #f38ba8; }
+  .punctuation { color: #9399b2; }
+  .severity { color: #fab387; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <span class="dot dot-red"></span>
+  <span class="dot dot-yellow"></span>
+  <span class="dot dot-green"></span>
+  <span class="title">medbook/.squad/agents/terminology/validation-rules.yml</span>
+  <span class="badge">🏥 TERMINOLOGY</span>
+</div>
+<pre>
+<span class="section">terminology_validation</span><span class="punctuation">:</span>
+
+  <span class="section">icd10_codes</span><span class="punctuation">:</span>
+    <span class="key">pattern</span><span class="punctuation">:</span> <span class="pattern">'^[A-Z][0-9]{2}(\.[0-9]{1,4})?$'</span>
+    <span class="key">examples</span><span class="punctuation">:</span>
+      <span class="good">valid</span><span class="punctuation">:</span>   <span class="str">"E11.9"</span> <span class="comment"># Type 2 diabetes</span>    <span class="str">"I10"</span> <span class="comment"># Hypertension</span>    <span class="str">"J44.0"</span> <span class="comment"># COPD</span>
+      <span class="bad">invalid</span><span class="punctuation">:</span> <span class="str">"E11"</span>   <span class="comment"># Missing specificity</span>  <span class="str">"999"</span> <span class="comment"># Must start with letter</span>
+    <span class="key">severity</span><span class="punctuation">:</span> <span class="severity">high</span>
+
+  <span class="section">cpt_codes</span><span class="punctuation">:</span>
+    <span class="key">pattern</span><span class="punctuation">:</span> <span class="pattern">'^\d{5}$'</span>
+    <span class="key">examples</span><span class="punctuation">:</span>
+      <span class="good">valid</span><span class="punctuation">:</span>   <span class="str">"99213"</span> <span class="comment"># Office visit</span>    <span class="str">"80053"</span> <span class="comment"># Metabolic panel</span>    <span class="str">"36415"</span> <span class="comment"># Venipuncture</span>
+      <span class="bad">invalid</span><span class="punctuation">:</span> <span class="str">"9921"</span>  <span class="comment"># Too few digits</span>  <span class="str">"ABC12"</span> <span class="comment"># Contains letters</span>
+    <span class="key">severity</span><span class="punctuation">:</span> <span class="severity">high</span>
+
+  <span class="section">medical_record_number</span><span class="punctuation">:</span>
+    <span class="key">pattern</span><span class="punctuation">:</span> <span class="pattern">'^MRN-\d{8}$'</span>          <span class="key">severity</span><span class="punctuation">:</span> <span class="severity">medium</span>
+
+  <span class="section">national_provider_identifier</span><span class="punctuation">:</span>
+    <span class="key">pattern</span><span class="punctuation">:</span> <span class="pattern">'^\d{10}$'</span>             <span class="key">severity</span><span class="punctuation">:</span> <span class="severity">high</span>
+
+  <span class="section">field_naming_standards</span><span class="punctuation">:</span>
+    <span class="key">patient_identifier</span><span class="punctuation">:</span>
+      <span class="good">preferred</span><span class="punctuation">:</span> <span class="str">[patient_id, mrn, medical_record_number]</span>
+      <span class="bad">avoid</span><span class="punctuation">:</span>     <span class="str">[user_id, person_id, client_id]</span>
+
+    <span class="key">diagnosis</span><span class="punctuation">:</span>
+      <span class="good">preferred</span><span class="punctuation">:</span> <span class="str">[diagnosis_code, icd10_code, primary_diagnosis]</span>
+      <span class="bad">avoid</span><span class="punctuation">:</span>     <span class="str">[problem, condition_id, disease_code]</span>
+
+    <span class="key">provider</span><span class="punctuation">:</span>
+      <span class="good">preferred</span><span class="punctuation">:</span> <span class="str">[provider_id, npi, healthcare_provider]</span>
+      <span class="bad">avoid</span><span class="punctuation">:</span>     <span class="str">[doctor_id, physician_id, practitioner]</span>
+
+    <span class="key">appointment</span><span class="punctuation">:</span>
+      <span class="good">preferred</span><span class="punctuation">:</span> <span class="str">[appointment_datetime, scheduled_at]</span>
+      <span class="bad">avoid</span><span class="punctuation">:</span>     <span class="str">[appt_time, booking_date, visit_time]</span>
+
+    <span class="key">status_values</span><span class="punctuation">:</span>
+      <span class="good">valid</span><span class="punctuation">:</span>   <span class="str">[scheduled, confirmed, checked_in, in_progress, completed, cancelled, no_show]</span>
+      <span class="bad">invalid</span><span class="punctuation">:</span> <span class="str">[active, done, finished]</span>
+</pre>
+
+</div>
+</body>
+</html>

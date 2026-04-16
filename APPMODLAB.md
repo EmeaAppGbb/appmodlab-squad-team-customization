@@ -258,6 +258,9 @@ agent:
       action: require_approval
 ```
 
+> 📸 [View: HIPAA Compliance Agent Charter](assets/screenshots/hipaa-agent-charter.html)
+> *Open the HTML file in a browser to view the syntax-highlighted rendering.*
+
 ### 2.3 Create Compliance Checklist
 
 Create `medbook/.squad/agents/hipaa-compliance/checklist.yml`:
@@ -302,6 +305,9 @@ hipaa_compliance_checklist:
 ```
 
 **Exercise:** Review a code change that adds patient logging. What HIPAA violations would this agent catch?
+
+> 📸 [View: HIPAA Compliance Checklist — Patterns & Severity Levels](assets/screenshots/hipaa-checklist.html)
+> *Open the HTML file in a browser to view the syntax-highlighted rendering.*
 
 ## Step 3: Define Domain Terminology Agent
 
@@ -390,6 +396,9 @@ terminology_validation:
       preferred: ["appointment_datetime", "scheduled_at"]
       avoid: ["appt_time", "booking_date"]
 ```
+
+> 📸 [View: Terminology Validation Rules — ICD-10, CPT, MRN, Field Naming](assets/screenshots/terminology-validation-rules.html)
+> *Open the HTML file in a browser to view the syntax-highlighted rendering.*
 
 ## Step 4: Define Data Anonymizer Agent
 
@@ -486,6 +495,9 @@ anonymization_utilities:
 
 **Exercise:** Write a test that generates 10 anonymized patient records. Verify none contain real PHI.
 
+> 📸 [View: Data Anonymizer Utilities — Test Data Patterns & Safe Harbor Rules](assets/screenshots/anonymizer-utilities.html)
+> *Open the HTML file in a browser to view the syntax-highlighted rendering.*
+
 ## Step 5: Configure Custom Ceremonies
 
 **Branch:** `step-3-ceremonies`
@@ -578,6 +590,9 @@ ceremonies:
       - Terminology standardization wins
       - Action items for next sprint
 ```
+
+> 📸 [View: Ceremonies Configuration — Standups, Retros, Audits](assets/screenshots/ceremonies-config.html)
+> *Open the HTML file in a browser to view the syntax-highlighted rendering.*
 
 ### 5.2 Create Ceremony Templates
 
@@ -727,6 +742,9 @@ squad_team:
     config: ceremonies/ceremonies.yml
 ```
 
+> 📸 [View: Full Team Configuration — Agents, Quality Gates, Workflows](assets/screenshots/team-config.html)
+> *Open the HTML file in a browser to view the syntax-highlighted rendering.*
+
 ### 6.2 Create Quality Gate Scripts
 
 Create `medbook/.squad/scripts/quality-gates.sh`:
@@ -852,6 +870,9 @@ jobs:
             --agent anonymizer \
             --check test_data_validation
 ```
+
+> 📸 [View: Quality Gates CI/CD Workflow — GitHub Actions](assets/screenshots/quality-gates-workflow.html)
+> *Open the HTML file in a browser to view the syntax-highlighted rendering.*
 
 ## Step 7: Integration Testing
 
@@ -1191,6 +1212,22 @@ After completing this lab:
 3. **Share with Team:** Document and share your SQUAD customizations
 4. **Iterate:** Continuously refine agent behavior based on real usage
 5. **Expand:** Add more agents as new requirements emerge
+
+## Screenshots & Visual References
+
+The `assets/screenshots/` folder contains syntax-highlighted HTML renderings of key configuration files. Open them in a browser and take screenshots for documentation or presentations.
+
+| File | What It Shows |
+|------|---------------|
+| [`team-config.html`](assets/screenshots/team-config.html) | Full `team.yml` — agents, quality gates, and workflows |
+| [`hipaa-agent-charter.html`](assets/screenshots/hipaa-agent-charter.html) | HIPAA Compliance Agent charter — PHI rules, checklist, code examples |
+| [`hipaa-checklist.html`](assets/screenshots/hipaa-checklist.html) | HIPAA compliance checklist — regex patterns, severity levels |
+| [`ceremonies-config.html`](assets/screenshots/ceremonies-config.html) | All five ceremony definitions — standups, retros, audits |
+| [`terminology-validation-rules.html`](assets/screenshots/terminology-validation-rules.html) | ICD-10, CPT, MRN, NPI validation rules and field naming standards |
+| [`anonymizer-utilities.html`](assets/screenshots/anonymizer-utilities.html) | Test data anonymization patterns and Safe Harbor rules |
+| [`quality-gates-workflow.html`](assets/screenshots/quality-gates-workflow.html) | GitHub Actions CI/CD workflow with all three custom agent jobs |
+
+> **Tip:** These HTML files use a Catppuccin Mocha color scheme with a faux-terminal header. They render at ~900px width and are designed to look great as documentation screenshots.
 
 ## Conclusion
 

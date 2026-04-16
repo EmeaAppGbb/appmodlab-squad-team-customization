@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ceremonies.yml — SQUAD Ceremonies</title>
+<style>
+  body { margin: 0; padding: 0; background: #1e1e2e; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+  .header { background: linear-gradient(135deg, #313244, #45475a); border-radius: 10px 10px 0 0; padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #f38ba8; }
+  .dot-yellow { background: #f9e2af; }
+  .dot-green { background: #a6e3a1; }
+  .title { color: #cdd6f4; font-size: 13px; margin-left: 12px; }
+  .badge { background: #cba6f7; color: #1e1e2e; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: auto; font-weight: 700; }
+  pre { background: #1e1e2e; margin: 0; padding: 20px; border-radius: 0 0 10px 10px; overflow-x: auto; border: 1px solid #313244; border-top: none; line-height: 1.6; font-size: 13px; }
+  .key { color: #89b4fa; }
+  .str { color: #a6e3a1; }
+  .bool { color: #fab387; }
+  .comment { color: #6c7086; font-style: italic; }
+  .section { color: #cba6f7; font-weight: bold; }
+  .num { color: #f9e2af; }
+  .punctuation { color: #9399b2; }
+  .emoji { font-style: normal; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <span class="dot dot-red"></span>
+  <span class="dot dot-yellow"></span>
+  <span class="dot dot-green"></span>
+  <span class="title">medbook/.squad/ceremonies/ceremonies.yml</span>
+  <span class="badge">🎭 CEREMONIES</span>
+</div>
+<pre>
+<span class="section">ceremonies</span><span class="punctuation">:</span>
+
+  <span class="comment"># ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+  <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">weekly-hipaa-review</span>
+    <span class="key">type</span><span class="punctuation">:</span> <span class="str">compliance_review</span>
+    <span class="key">frequency</span><span class="punctuation">:</span> <span class="str">weekly</span>   <span class="key">day</span><span class="punctuation">:</span> <span class="str">friday</span>   <span class="key">time</span><span class="punctuation">:</span> <span class="str">"15:00"</span>   <span class="key">duration</span><span class="punctuation">:</span> <span class="num">30_minutes</span>
+    <span class="key">participants</span><span class="punctuation">:</span>
+      <span class="key">required</span><span class="punctuation">:</span> <span class="str">[hipaa-compliance, eyes, brain]</span>
+    <span class="key">agenda</span><span class="punctuation">:</span>
+      <span class="punctuation">-</span> <span class="str">"Review PHI handling in merged PRs"</span>         <span class="comment"># 15 min</span>
+      <span class="punctuation">-</span> <span class="str">"Discuss new compliance requirements"</span>       <span class="comment">#  5 min</span>
+      <span class="punctuation">-</span> <span class="str">"Update HIPAA checklist if needed"</span>          <span class="comment">#  5 min</span>
+      <span class="punctuation">-</span> <span class="str">"Share compliance findings &amp; lessons learned"</span> <span class="comment">#  5 min</span>
+
+  <span class="comment"># ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+  <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">sprint-planning-with-compliance</span>
+    <span class="key">type</span><span class="punctuation">:</span> <span class="str">sprint_planning</span>
+    <span class="key">frequency</span><span class="punctuation">:</span> <span class="str">biweekly</span>   <span class="key">day</span><span class="punctuation">:</span> <span class="str">monday</span>   <span class="key">time</span><span class="punctuation">:</span> <span class="str">"09:00"</span>   <span class="key">duration</span><span class="punctuation">:</span> <span class="num">2_hours</span>
+    <span class="key">participants</span><span class="punctuation">:</span>
+      <span class="key">required</span><span class="punctuation">:</span> <span class="str">[brain, hipaa-compliance, terminology, hands]</span>
+    <span class="key">agenda</span><span class="punctuation">:</span>
+      <span class="punctuation">-</span> <span class="str">"Review product backlog"</span>                    <span class="comment"># 30 min</span>
+      <span class="punctuation">-</span> <span class="str">"Identify PHI-touching features"</span>             <span class="comment"># 20 min</span>
+      <span class="punctuation">-</span> <span class="str">"Estimate compliance overhead"</span>               <span class="comment"># 20 min</span>
+      <span class="punctuation">-</span> <span class="str">"Plan HIPAA reviews for high-risk features"</span>  <span class="comment"># 20 min</span>
+
+  <span class="comment"># ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+  <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">daily-standup-healthcare</span>
+    <span class="key">type</span><span class="punctuation">:</span> <span class="str">standup</span>
+    <span class="key">frequency</span><span class="punctuation">:</span> <span class="str">daily</span>   <span class="key">time</span><span class="punctuation">:</span> <span class="str">"09:30"</span>   <span class="key">duration</span><span class="punctuation">:</span> <span class="num">15_minutes</span>
+    <span class="key">participants</span><span class="punctuation">:</span> <span class="str">all_agents</span>
+    <span class="key">format</span><span class="punctuation">:</span>
+      <span class="punctuation">-</span> <span class="str">"What did you complete yesterday?"</span>            <span class="comment"># 5 min</span>
+      <span class="punctuation">-</span> <span class="str">"What will you work on today?"</span>                <span class="comment"># 5 min</span>
+      <span class="punctuation">-</span> <span class="str">"Any compliance blockers?"</span>                    <span class="comment"># 2 min</span>
+      <span class="punctuation">-</span> <span class="str">"Any terminology questions?"</span>                  <span class="comment"># 2 min</span>
+
+  <span class="comment"># ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+  <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">retrospective-with-compliance</span>
+    <span class="key">type</span><span class="punctuation">:</span> <span class="str">retrospective</span>        <span class="key">frequency</span><span class="punctuation">:</span> <span class="str">biweekly</span>     <span class="key">duration</span><span class="punctuation">:</span> <span class="num">1_hour</span>
+
+  <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">monthly-compliance-audit</span>
+    <span class="key">type</span><span class="punctuation">:</span> <span class="str">audit</span>               <span class="key">frequency</span><span class="punctuation">:</span> <span class="str">monthly</span>      <span class="key">duration</span><span class="punctuation">:</span> <span class="num">1_hour</span>
+
+<span class="section">ceremony_settings</span><span class="punctuation">:</span>
+  <span class="key">timezone</span><span class="punctuation">:</span> <span class="str">"UTC"</span>
+  <span class="key">notifications</span><span class="punctuation">:</span>  <span class="key">slack_channel</span><span class="punctuation">:</span> <span class="str">"#medbook-squad"</span>   <span class="key">reminder_before</span><span class="punctuation">:</span> <span class="num">1_hour</span>
+  <span class="key">recording</span><span class="punctuation">:</span>      <span class="key">enabled</span><span class="punctuation">:</span> <span class="bool">true</span>                <span class="key">retention</span><span class="punctuation">:</span> <span class="num">90_days</span>
+  <span class="key">attendance_required</span><span class="punctuation">:</span> <span class="bool">true</span>
+</pre>
+
+</div>
+</body>
+</html>

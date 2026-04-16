@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Anonymizer Utilities — Test Data Patterns</title>
+<style>
+  body { margin: 0; padding: 0; background: #1e1e2e; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+  .header { background: linear-gradient(135deg, #313244, #45475a); border-radius: 10px 10px 0 0; padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #f38ba8; }
+  .dot-yellow { background: #f9e2af; }
+  .dot-green { background: #a6e3a1; }
+  .title { color: #cdd6f4; font-size: 13px; margin-left: 12px; }
+  .badge { background: #89dceb; color: #1e1e2e; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: auto; font-weight: 700; }
+  pre { background: #1e1e2e; margin: 0; padding: 20px; border-radius: 0 0 10px 10px; overflow-x: auto; border: 1px solid #313244; border-top: none; line-height: 1.6; font-size: 13px; }
+  .key { color: #89b4fa; }
+  .str { color: #a6e3a1; }
+  .pattern { color: #f9e2af; }
+  .comment { color: #6c7086; font-style: italic; }
+  .section { color: #cba6f7; font-weight: bold; }
+  .example { color: #89dceb; }
+  .punctuation { color: #9399b2; }
+  .severity-critical { color: #f38ba8; font-weight: bold; }
+  .severity-high { color: #fab387; font-weight: bold; }
+  .good { color: #a6e3a1; }
+  .keyword { color: #cba6f7; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <span class="dot dot-red"></span>
+  <span class="dot dot-yellow"></span>
+  <span class="dot dot-green"></span>
+  <span class="title">medbook/.squad/agents/anonymizer/utilities.yml</span>
+  <span class="badge">🔐 ANONYMIZER</span>
+</div>
+<pre>
+<span class="section">anonymization_utilities</span><span class="punctuation">:</span>
+
+  <span class="section">fake_patient_generator</span><span class="punctuation">:</span>
+    <span class="key">name</span><span class="punctuation">:</span>
+      <span class="key">pattern</span><span class="punctuation">:</span>  <span class="pattern">"Test {FirstName} {LastName}"</span>
+      <span class="key">example</span><span class="punctuation">:</span>  <span class="example">"Test John Smith"</span>        <span class="example">"Test Mary Johnson"</span>
+
+    <span class="key">mrn</span><span class="punctuation">:</span>
+      <span class="key">pattern</span><span class="punctuation">:</span>  <span class="pattern">"MRN-T{7_digits}"</span>
+      <span class="key">example</span><span class="punctuation">:</span>  <span class="example">"MRN-T1234567"</span>           <span class="comment"># "T" marker = test data</span>
+
+    <span class="key">ssn</span><span class="punctuation">:</span>
+      <span class="key">pattern</span><span class="punctuation">:</span>  <span class="pattern">"000-00-{4_digits}"</span>
+      <span class="key">example</span><span class="punctuation">:</span>  <span class="example">"000-00-1234"</span>            <span class="comment"># 000-00 = clearly fake</span>
+
+    <span class="key">phone</span><span class="punctuation">:</span>
+      <span class="key">pattern</span><span class="punctuation">:</span>  <span class="pattern">"(555) 01{2_digits}"</span>
+      <span class="key">example</span><span class="punctuation">:</span>  <span class="example">"(555) 0145"</span>             <span class="comment"># 555-01XX = reserved range</span>
+
+    <span class="key">email</span><span class="punctuation">:</span>
+      <span class="key">pattern</span><span class="punctuation">:</span>  <span class="pattern">"patient.test{N}@example.com"</span>
+      <span class="key">example</span><span class="punctuation">:</span>  <span class="example">"patient.test1234@example.com"</span>
+
+    <span class="key">address</span><span class="punctuation">:</span>
+      <span class="key">example</span><span class="punctuation">:</span>  <span class="example">"123 Test Street, Anytown, NY 10001"</span>
+
+  <span class="section">validation_checks</span><span class="punctuation">:</span>
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span>     <span class="str">"No real SSNs"</span>
+      <span class="key">pattern</span><span class="punctuation">:</span>  <span class="pattern">'^(?!000)(?!666)(?!9)\d{3}-(?!00)\d{2}-(?!0000)\d{4}$'</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-critical">critical</span>
+      <span class="key">message</span><span class="punctuation">:</span>  <span class="str">"Test data contains a potentially real SSN. Use 000-00-XXXX."</span>
+
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span>     <span class="str">"No real names"</span>
+      <span class="key">check</span><span class="punctuation">:</span>    <span class="str">"name must start with 'Test '"</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-high">high</span>
+
+    <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span>     <span class="str">"Test MRN prefix"</span>
+      <span class="key">pattern</span><span class="punctuation">:</span>  <span class="pattern">'^MRN-T\d{7}$'</span>
+      <span class="key">severity</span><span class="punctuation">:</span> <span class="severity-high">high</span>
+
+  <span class="section">hipaa_safe_harbor_identifiers</span><span class="punctuation">:</span>      <span class="comment"># 18 identifier types to remove</span>
+    <span class="punctuation">-</span> <span class="key">Names</span><span class="punctuation">:</span>       <span class="str">"Use 'Test ' prefix"</span>
+    <span class="punctuation">-</span> <span class="key">Telephone</span><span class="punctuation">:</span>   <span class="str">"Use (555) 01XX range"</span>
+    <span class="punctuation">-</span> <span class="key">Email</span><span class="punctuation">:</span>       <span class="str">"Use @example.com"</span>
+    <span class="punctuation">-</span> <span class="key">SSN</span><span class="punctuation">:</span>         <span class="str">"Use 000-00-XXXX"</span>
+    <span class="punctuation">-</span> <span class="key">MRN</span><span class="punctuation">:</span>         <span class="str">"Use MRN-T####### with T marker"</span>
+    <span class="punctuation">-</span> <span class="key">IP address</span><span class="punctuation">:</span>  <span class="str">"Use 192.0.2.x, 198.51.100.x, 203.0.113.x"</span>
+</pre>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SQUAD Quality Gates — GitHub Actions</title>
+<style>
+  body { margin: 0; padding: 0; background: #1e1e2e; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+  .header { background: linear-gradient(135deg, #313244, #45475a); border-radius: 10px 10px 0 0; padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #f38ba8; }
+  .dot-yellow { background: #f9e2af; }
+  .dot-green { background: #a6e3a1; }
+  .title { color: #cdd6f4; font-size: 13px; margin-left: 12px; }
+  .badge { background: #fab387; color: #1e1e2e; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: auto; font-weight: 700; }
+  pre { background: #1e1e2e; margin: 0; padding: 20px; border-radius: 0 0 10px 10px; overflow-x: auto; border: 1px solid #313244; border-top: none; line-height: 1.6; font-size: 13px; }
+  .key { color: #89b4fa; }
+  .str { color: #a6e3a1; }
+  .bool { color: #fab387; }
+  .comment { color: #6c7086; font-style: italic; }
+  .section { color: #cba6f7; font-weight: bold; }
+  .action { color: #89dceb; }
+  .punctuation { color: #9399b2; }
+  .cmd { color: #f9e2af; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <span class="dot dot-red"></span>
+  <span class="dot dot-yellow"></span>
+  <span class="dot dot-green"></span>
+  <span class="title">.github/workflows/squad-quality-gates.yml</span>
+  <span class="badge">⚙️ CI/CD</span>
+</div>
+<pre>
+<span class="key">name</span><span class="punctuation">:</span> <span class="str">SQUAD Quality Gates</span>
+
+<span class="key">on</span><span class="punctuation">:</span>
+  <span class="key">pull_request</span><span class="punctuation">:</span>
+    <span class="key">branches</span><span class="punctuation">:</span> <span class="str">[ main, develop ]</span>
+    <span class="key">paths</span><span class="punctuation">:</span>    <span class="str">[ 'medbook/**' ]</span>
+  <span class="key">push</span><span class="punctuation">:</span>
+    <span class="key">branches</span><span class="punctuation">:</span> <span class="str">[ main ]</span>
+
+<span class="key">jobs</span><span class="punctuation">:</span>
+
+  <span class="comment"># ━━━ Job 1: HIPAA Compliance ━━━</span>
+  <span class="section">hipaa-compliance</span><span class="punctuation">:</span>
+    <span class="key">name</span><span class="punctuation">:</span> <span class="str">HIPAA Compliance Check</span>
+    <span class="key">runs-on</span><span class="punctuation">:</span> <span class="str">ubuntu-latest</span>
+    <span class="key">steps</span><span class="punctuation">:</span>
+      <span class="punctuation">-</span> <span class="key">uses</span><span class="punctuation">:</span> <span class="action">actions/checkout@v4</span>
+      <span class="punctuation">-</span> <span class="key">uses</span><span class="punctuation">:</span> <span class="action">github/copilot-cli-action@v1</span>
+      <span class="punctuation">-</span> <span class="key">run</span><span class="punctuation">:</span>  <span class="cmd">copilot squad run --agent hipaa-compliance --check compliance_review</span>
+        <span class="key">continue-on-error</span><span class="punctuation">:</span> <span class="bool">false</span>
+      <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">Check for Critical Violations</span>
+        <span class="key">run</span><span class="punctuation">:</span>  <span class="cmd">VIOLATIONS=$(jq '.violations | length' compliance-report.json)</span>
+              <span class="cmd">if [ "$VIOLATIONS" -gt 0 ]; then exit 1; fi</span>
+
+  <span class="comment"># ━━━ Job 2: Terminology Validation ━━━</span>
+  <span class="section">terminology-validation</span><span class="punctuation">:</span>
+    <span class="key">name</span><span class="punctuation">:</span> <span class="str">Healthcare Terminology Validation</span>
+    <span class="key">runs-on</span><span class="punctuation">:</span> <span class="str">ubuntu-latest</span>
+    <span class="key">steps</span><span class="punctuation">:</span>
+      <span class="punctuation">-</span> <span class="key">uses</span><span class="punctuation">:</span> <span class="action">actions/checkout@v4</span>
+      <span class="punctuation">-</span> <span class="key">uses</span><span class="punctuation">:</span> <span class="action">github/copilot-cli-action@v1</span>
+      <span class="punctuation">-</span> <span class="key">run</span><span class="punctuation">:</span>  <span class="cmd">copilot squad run --agent terminology --check terminology_validation</span>
+
+  <span class="comment"># ━━━ Job 3: Test Data Anonymization ━━━</span>
+  <span class="section">test-data-anonymization</span><span class="punctuation">:</span>
+    <span class="key">name</span><span class="punctuation">:</span> <span class="str">Validate Test Data Anonymization</span>
+    <span class="key">runs-on</span><span class="punctuation">:</span> <span class="str">ubuntu-latest</span>
+    <span class="key">steps</span><span class="punctuation">:</span>
+      <span class="punctuation">-</span> <span class="key">uses</span><span class="punctuation">:</span> <span class="action">actions/checkout@v4</span>
+      <span class="punctuation">-</span> <span class="key">uses</span><span class="punctuation">:</span> <span class="action">github/copilot-cli-action@v1</span>
+      <span class="punctuation">-</span> <span class="key">run</span><span class="punctuation">:</span>  <span class="cmd">copilot squad run --agent anonymizer --check test_data_validation</span>
+      <span class="punctuation">-</span> <span class="key">name</span><span class="punctuation">:</span> <span class="str">Check for Real PHI in Tests</span>
+        <span class="key">run</span><span class="punctuation">:</span>  <span class="cmd">PHI=$(jq '.phi_in_tests | length' anonymization-report.json)</span>
+              <span class="cmd">if [ "$PHI" -gt 0 ]; then exit 1; fi</span>
+</pre>
+
+</div>
+</body>
+</html>
