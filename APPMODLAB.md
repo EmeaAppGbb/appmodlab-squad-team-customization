@@ -1243,6 +1243,101 @@ SQUAD's extensibility allows you to encode your organization's unique developmen
 
 ---
 
+## CLI Execution Log
+
+The following section documents the actual CLI commands and outputs from executing this lab using Squad CLI and GH Copilot CLI. Full outputs are available in `assets/outputs/` on the `solution-final` branch.
+
+### Step 1: Explore Application
+
+```powershell
+cd medbook
+Get-ChildItem -Recurse -Name  # Review repo structure
+Get-Content go.mod             # Go 1.22, Gin, gRPC, pgx
+Get-Content .squad/team.yml    # 7 agents, quality gates, workflows
+```
+
+**Result:** MedBook is a Go microservices platform with 3 services (patient, provider, appointment), gRPC + HTTP APIs, PostgreSQL, and K8s manifests. Existing SQUAD config has 4 standard + 3 custom healthcare agents.
+
+### Step 2: Initialize Squad
+
+```powershell
+npx @bradygaster/squad-cli init
+```
+
+**Result:** Created full Squad workspace with default agents (Scribe, Ralph), identity, ceremonies, decisions, team.md, routing.md, GitHub workflows (heartbeat, issue-assign, triage, sync-labels), Copilot skills (30+ built-in), and MCP config.
+
+### Step 3: Add Custom Agents
+
+```powershell
+# Squad CLI hire (preview)
+npx @bradygaster/squad-cli hire --name "hipaa-auditor" --role "security"
+npx @bradygaster/squad-cli hire --name "terminology-validator" --role "compliance-legal"
+npx @bradygaster/squad-cli hire --name "data-anonymizer" --role "tester"
+
+# GH Copilot CLI - full agent charter creation
+gh copilot -- -p "Create HIPAA Compliance Agent charter at .squad/agents/hipaa-auditor/charter.md with PHI exposure prevention, encryption validation, audit logging, minimum necessary access, and RBAC checks" --allow-all-tools --yolo
+```
+
+**Result:** Created comprehensive HIPAA auditor agent charter (+265 lines) covering §164.312 requirements with detailed checklists, trigger conditions, severity levels, and Go-specific code examples.
+
+### Step 4: Define Custom Skills
+
+```powershell
+gh copilot -- -p "Create custom HIPAA compliance checking skill at .copilot/skills/hipaa-compliance/SKILL.md with Go-specific PHI scanning, audit logging validation, access control checks, encryption verification, and test data anonymization patterns" --allow-all-tools --yolo
+```
+
+**Result:** Created HIPAA compliance skill (+360 lines) with 6 detection patterns: PHI in logs/responses, audit gaps, missing auth middleware, encryption config, and hardcoded patient identifiers. All patterns reference actual MedBook codebase structures.
+
+### Step 5: Configure Custom Ceremonies
+
+```powershell
+gh copilot -- -p "Update .squad/ceremonies.md to add: Security Review (pre-PR for patient data), HIPAA Sprint Compliance Check (biweekly), and Terminology Standup (weekly)" --allow-all-tools --yolo
+```
+
+**Result:** Added 3 healthcare-specific ceremonies to the existing 2, totaling 5 event-driven ceremonies. Security Review auto-triggers before any PR touching `internal/patient/` or `proto/`.
+
+### Step 6: Test Custom Configuration
+
+```powershell
+# Validate setup
+npx @bradygaster/squad-cli doctor
+# Output: 7 passed, 1 failed, 2 warnings
+
+npx @bradygaster/squad-cli status
+# Output: Active squad: repo, Path: medbook/.squad
+
+# Test HIPAA compliance review
+gh copilot -- -p "Review patient service for HIPAA compliance using hipaa-auditor charter" --allow-all-tools --yolo
+```
+
+**Result:** HIPAA agent identified 2 critical (no auth, no TLS), 3 high (no audit logging, plaintext SSN, no DTOs), and 2 medium (no pagination, error leaks) findings. Positive: SSL on DB, explicit column selection, SSN stripped from responses.
+
+### Step 7: Document & Review
+
+```powershell
+gh copilot -- -p "Generate comprehensive customization summary to .squad/docs/customization-summary.md" --allow-all-tools --yolo
+```
+
+**Result:** Created customization summary (+257 lines) documenting all 10 agents, HIPAA compliance skill, 10 ceremonies, and 3-stage quality gates.
+
+### Branch & Tags
+
+```powershell
+git push origin solution-final --tags
+```
+
+| Tag | Description |
+|-----|-------------|
+| `step-01-explore-app` | Codebase exploration and analysis |
+| `step-02-initialize-squad` | Squad CLI initialization |
+| `step-03-custom-agents` | HIPAA auditor agent creation |
+| `step-04-custom-skills` | HIPAA compliance skill |
+| `step-05-custom-ceremonies` | Healthcare ceremonies |
+| `step-06-test-configuration` | Doctor, status, and compliance test |
+| `step-07-document-review` | Customization summary |
+
+---
+
 **Lab Complete!** 🎉
 
 For questions or feedback, please open an issue in the repository.
