@@ -1,0 +1,30 @@
+=== STEP 4: DEFINE CUSTOM SKILLS ===
+Date: 2026-04-16 19:34:08
+
+--- Command ---
+gh copilot -- -p "Create a custom HIPAA compliance checking skill..." --allow-all-tools --yolo
+
+--- Output ---
+GH Copilot CLI analyzed:
+- Existing Squad SKILL.md files (secret-handling, test-discipline, project-conventions, ci-validation-gates)
+- MedBook Go codebase structure (internal/, cmd/, proto/)
+- Existing HIPAA compliance checklist and agent charter
+
+Created: .copilot/skills/hipaa-compliance/SKILL.md (+360 lines)
+
+Skill covers 5 key areas:
+1. PHI Exposure Scanning - regex patterns for log.*, fmt.*, slog.*, zap.* calls 
+   and Gin JSON responses referencing PHI fields
+2. Audit Logging Gaps - maps all 11 PHI handlers across 3 services to required 
+   audit entries with detection guidance
+3. Access Control Middleware - checks Gin router registrations for missing 
+   auth.RequireToken()/auth.RequireRole() on PHI routes
+4. Encryption Validation - TLS 1.2+ on HTTP/gRPC, sslmode=require on Postgres, 
+   K8s Secrets vs ConfigMaps, no hardcoded keys
+5. Hardcoded Patient Identifiers - enforces anonymization conventions 
+   (Test prefix, MRN-T, 000-00- SSN, @example.com)
+
+All patterns are Go-specific (Gin handlers, pgx queries, slog/zap logging) and 
+reference actual MedBook codebase structures.
+
+Tokens: 510.9k input, 12.0k output, 424.7k cached
