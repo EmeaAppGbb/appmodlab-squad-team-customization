@@ -1,0 +1,38 @@
+=== STEP 3: ADD CUSTOM AGENTS ===
+Date: 2026-04-16 19:29:47
+
+--- 3.1 Squad CLI Hire Commands ---
+
+Command: npx @bradygaster/squad-cli hire --name "hipaa-auditor" --role "security"
+Output: Squad hire - team creation wizard starting... (full implementation pending)
+   Name: hipaa-auditor
+   Role: security
+
+Command: npx @bradygaster/squad-cli hire --name "terminology-validator" --role "compliance-legal"
+Output: Squad hire - team creation wizard starting... (full implementation pending)
+   Name: terminology-validator
+   Role: compliance-legal
+
+Command: npx @bradygaster/squad-cli hire --name "data-anonymizer" --role "tester"
+Output: Squad hire - team creation wizard starting... (full implementation pending)
+   Name: data-anonymizer
+   Role: tester
+
+Note: The 'hire' command is in preview. Used GH Copilot CLI for full agent creation.
+
+--- 3.2 GH Copilot CLI: Create HIPAA Auditor Agent ---
+
+Command: gh copilot -- -p "Create HIPAA Compliance Agent charter..." --allow-all-tools --yolo
+
+Output:
+- Analyzed existing agents (scribe, ralph, hipaa-compliance) for charter format
+- Created .squad/agents/hipaa-auditor/charter.md (+265 lines)
+  - PHI exposure prevention (logs, errors, APIs, metrics, URLs)
+  - Encryption validation (TLS, mTLS, column-level, key management)
+  - Audit logging (required fields, retention, immutability)
+  - Minimum necessary access (no SELECT *, purpose-specific DTOs)
+  - Role-based access control (auth middleware, least-privilege roles)
+  - Full review checklist and trigger conditions
+- Created .squad/agents/hipaa-auditor/history.md (+4 lines)
+
+Tokens: 188.8k input, 4.4k output, 129.7k cached
