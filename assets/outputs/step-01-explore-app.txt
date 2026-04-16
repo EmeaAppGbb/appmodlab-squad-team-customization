@@ -1,0 +1,479 @@
+=== STEP 1: EXPLORE APPLICATION ===
+Date: 2026-04-16 19:24:31
+Lab: SQUAD Team Customization - MedBook Healthcare SaaS
+
+--- 1.1 Repository Structure ---
+.squad
+cmd
+internal
+k8s
+proto
+tests
+go.mod
+README.md
+.squad\agents
+.squad\ceremonies
+.squad\docs
+.squad\scripts
+.squad\team.yml
+.squad\agents\anonymizer
+.squad\agents\brain
+.squad\agents\eyes
+.squad\agents\hands
+.squad\agents\hipaa-compliance
+.squad\agents\mouth
+.squad\agents\terminology
+.squad\agents\anonymizer\charter.md
+.squad\agents\anonymizer\config.yml
+.squad\agents\anonymizer\utilities.yml
+.squad\agents\brain\charter.md
+.squad\agents\brain\config.yml
+.squad\agents\eyes\charter.md
+.squad\agents\eyes\config.yml
+.squad\agents\hands\charter.md
+.squad\agents\hands\config.yml
+.squad\agents\hipaa-compliance\charter.md
+.squad\agents\hipaa-compliance\checklist.yml
+.squad\agents\hipaa-compliance\config.yml
+.squad\agents\mouth\charter.md
+.squad\agents\mouth\config.yml
+.squad\agents\terminology\charter.md
+.squad\agents\terminology\config.yml
+.squad\agents\terminology\validation-rules.yml
+.squad\ceremonies\templates
+.squad\ceremonies\ceremonies.yml
+.squad\ceremonies\templates\weekly-hipaa-review.md
+.squad\docs\custom-agent-template.md
+.squad\scripts\quality-gates.sh
+cmd\appointment-service
+cmd\patient-service
+cmd\provider-service
+cmd\appointment-service\main.go
+cmd\patient-service\main.go
+cmd\provider-service\main.go
+internal\appointment
+internal\patient
+internal\provider
+internal\appointment\service.go
+internal\patient\service.go
+internal\provider\service.go
+k8s\deployment.yaml
+k8s\service.yaml
+proto\appointment.proto
+proto\patient.proto
+tests\patient_test.go
+
+
+--- 1.2 Go Module Info ---
+module github.com/emeaappgbb/medbook
+
+go 1.22
+
+require (
+	github.com/gin-gonic/gin v1.9.1
+	github.com/jackc/pgx/v5 v5.5.0
+	google.golang.org/grpc v1.60.0
+	google.golang.org/protobuf v1.31.0
+)
+
+require (
+	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
+	github.com/jackc/puddle/v2 v2.2.1 // indirect
+	golang.org/x/crypto v0.17.0 // indirect
+	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/sync v0.5.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20231212172506-995d672761c0 // indirect
+)
+
+--- 1.3 Existing SQUAD Configuration ---
+squad_team:
+  name: medbook-healthcare-team
+  version: 2.0.0
+  description: Custom SQUAD team for healthcare development with HIPAA compliance and domain-specific agents
+  
+  agents:
+    # Standard SQUAD agents
+    - name: brain
+      enabled: true
+      role: Architect & Planner
+      config: agents/brain/config.yml
+      charter: agents/brain/charter.md
+      
+    - name: eyes
+      enabled: true
+      role: Code Reviewer
+      config: agents/eyes/config.yml
+      charter: agents/eyes/charter.md
+      
+    - name: hands
+      enabled: true
+      role: Implementation Engineer
+      config: agents/hands/config.yml
+      charter: agents/hands/charter.md
+      
+    - name: mouth
+      enabled: true
+      role: Documentation Specialist
+      config: agents/mouth/config.yml
+      charter: agents/mouth/charter.md
+      
+    # Custom healthcare-specific agents
+    - name: hipaa-compliance
+      enabled: true
+      role: HIPAA Compliance Reviewer
+      config: agents/hipaa-compliance/config.yml
+      charter: agents/hipaa-compliance/charter.md
+      custom: true
+      
+    - name: terminology
+      enabled: true
+      role: Healthcare Terminology Validator
+      config: agents/terminology/config.yml
+      charter: agents/terminology/charter.md
+      custom: true
+      
+    - name: anonymizer
+      enabled: true
+      role: Test Data Anonymization Specialist
+      config: agents/anonymizer/config.yml
+      charter: agents/anonymizer/charter.md
+      custom: true
+  
+  quality_gates:
+    pre_commit:
+      - agent: hipaa-compliance
+        check: phi_exposure_scan
+        required: true
+        description: "Scan for PHI exposure in code changes"
+        
+      - agent: anonymizer
+        check: test_data_validation
+        required: true
+        description: "Validate test data is properly anonymized"
+        
+    code_review:
+      - agent: eyes
+        check: standard_review
+        required: true
+        description: "Standard code quality review"
+        
+      - agent: hipaa-compliance
+        check: compliance_review
+        required: true
+        blocking: true
+        description: "HIPAA compliance validation (blocking)"
+        
+      - agent: terminology
+        check: terminology_validation
+        required: true
+        description: "Healthcare terminology and coding standards"
+        
+    pre_merge:
+      - agent: hipaa-compliance
+        check: final_compliance_check
+        required: true
+        blocking: true
+        description: "Final HIPAA compliance verification"
+        
+      - agent: brain
+        check: architecture_approval
+        required: true
+        description: "Architecture and design approval"
+  
+  workflows:
+    feature_development:
+      description: "Standard feature development workflow"
+      stages:
+        - name: planning
+          agents: [brain, hipaa-compliance]
+          description: "Plan feature with compliance considerations"
+          
+        - name: implementation
+          agents: [hands, terminology]
+          description: "Implement with proper terminology"
+          
+        - name: review
+          agents: [eyes, hipaa-compliance, terminology]
+          description: "Code review with compliance and terminology checks"
+          
+        - name: documentation
+          agents: [mouth]
+          description: "Document the feature"
+          
+    hotfix:
+      description: "Emergency hotfix workflow"
+      fast_track: true
+      required_agents: [hands, eyes, hipaa-compliance]
+      stages:
+        - name: implementation_and_review
+          agents: [hands, eyes, hipaa-compliance]
+          description: "Fast-tracked implementation with mandatory compliance"
+      
+  ceremonies:
+    config: ceremonies/ceremonies.yml
+    enabled: true
+    
+  integrations:
+    ci_cd:
+      github_actions: true
+      required_checks:
+        - hipaa-compliance
+        - terminology-validation
+        - test-data-anonymization
+
+--- 1.4 Proto Definitions ---
+appointment.proto
+patient.proto
+
+--- 1.5 Agent Structure ---
+anonymizer
+brain
+eyes
+hands
+hipaa-compliance
+mouth
+terminology
+anonymizer\charter.md
+anonymizer\config.yml
+anonymizer\utilities.yml
+brain\charter.md
+brain\config.yml
+eyes\charter.md
+eyes\config.yml
+hands\charter.md
+hands\config.yml
+hipaa-compliance\charter.md
+hipaa-compliance\checklist.yml
+hipaa-compliance\config.yml
+mouth\charter.md
+mouth\config.yml
+terminology\charter.md
+terminology\config.yml
+terminology\validation-rules.yml
+
+--- 1.6 Ceremonies Configuration ---
+ceremonies:
+  - name: weekly-hipaa-review
+    type: compliance_review
+    frequency: weekly
+    day: friday
+    time: "15:00"
+    duration: 30_minutes
+    
+    description: "Weekly review of HIPAA compliance across merged PRs and ongoing work"
+    
+    participants:
+      required:
+        - hipaa-compliance
+        - eyes
+        - brain
+      optional:
+        - hands
+        - mouth
+    
+    agenda:
+      - item: "Review PHI handling in merged PRs"
+        duration: 15_minutes
+        owner: hipaa-compliance
+        
+      - item: "Discuss new compliance requirements"
+        duration: 5_minutes
+        owner: brain
+        
+      - item: "Update HIPAA checklist if needed"
+        duration: 5_minutes
+        owner: hipaa-compliance
+        
+      - item: "Share compliance findings and lessons learned"
+        duration: 5_minutes
+        owner: eyes
+      
+    artifacts:
+      - name: "compliance_report.md"
+        template: "templates/weekly-hipaa-review.md"
+      - name: "action_items.yml"
+        
+  - name: sprint-planning-with-compliance
+    type: sprint_planning
+    frequency: biweekly
+    day: monday
+    time: "09:00"
+    duration: 2_hours
+    
+    description: "Sprint planning that includes HIPAA compliance and healthcare terminology considerations"
+    
+    participants:
+      required:
+        - brain
+        - hipaa-compliance
+        - terminology
+        - hands
+      optional:
+        - eyes
+        - mouth
+        - anonymizer
+    
+    agenda:
+      - item: "Review product backlog"
+        duration: 30_minutes
+        owner: brain
+        
+      - item: "Identify PHI-touching features"
+        duration: 20_minutes
+        owner: hipaa-compliance
+        
+      - item: "Estimate compliance overhead"
+        duration: 20_minutes
+        owner: brain
+        
+      - item: "Plan HIPAA reviews for high-risk features"
+        duration: 20_minutes
+        owner: hipaa-compliance
+        
+      - item: "Assign compliance checkpoints"
+        duration: 20_minutes
+        owner: brain
+        
+      - item: "Discuss healthcare terminology requirements"
+        duration: 10_minutes
+        owner: terminology
+        
+    output:
+      - "sprint_plan.md"
+      - "compliance_checkpoint_schedule.yml"
+      
+  - name: daily-standup-healthcare
+    type: standup
+    frequency: daily
+    time: "09:30"
+    duration: 15_minutes
+    
+    description: "Daily standup with healthcare-specific blocker discussion"
+    
+    participants:
+      required:
+        - all_agents
+    
+    format:
+      - question: "What did you complete yesterday?"
+        time: 5_minutes
+        
+      - question: "What will you work on today?"
+        time: 5_minutes
+        
+      - question: "Any compliance blockers?"
+        time: 2_minutes
+        
+      - question: "Any terminology questions?"
+        time: 2_minutes
+        
+      - question: "Any other blockers?"
+        time: 1_minute
+        
+  - name: retrospective-with-compliance
+    type: retrospective
+    frequency: biweekly
+    day: friday
+    time: "14:00"
+    duration: 1_hour
+    
+    description: "Sprint retrospective with focus on compliance and healthcare quality"
+    
+    participants:
+      required:
+        - all_agents
+    
+    topics:
+      - topic: "What went well?"
+        duration: 15_minutes
+        
+      - topic: "What could be improved?"
+        duration: 15_minutes
+        
+      - topic: "HIPAA compliance challenges"
+        duration: 10_minutes
+        owner: hipaa-compliance
+        
+      - topic: "Terminology standardization wins"
+        duration: 10_minutes
+        owner: terminology
+        
+      - topic: "Action items for next sprint"
+        duration: 10_minutes
+        owner: brain
+        
+    output:
+      - "retrospective_notes.md"
+      - "action_items.yml"
+      
+  - name: monthly-compliance-audit
+    type: audit
+    frequency: monthly
+    day: first_monday
+    time: "10:00"
+    duration: 1_hour
+    
+    description: "Monthly comprehensive HIPAA compliance audit"
+    
+    participants:
+      required:
+        - hipaa-compliance
+        - brain
+        - eyes
+      optional:
+        - all_agents
+    
+    scope:
+      - "Review all merged code from past month"
+      - "Audit logging completeness"
+      - "Encryption implementation review"
+      - "Access control validation"
+      - "PHI exposure scan across codebase"
+      
+    deliverables:
+      - "monthly_compliance_report.pdf"
+      - "compliance_scorecard.yml"
+      - "remediation_plan.md"
+
+ceremony_settings:
+  timezone: "UTC"
+  
+  notifications:
+    slack_channel: "#medbook-squad"
+    reminder_before: 1_hour
+    
+  recording:
+    enabled: true
+    retention: 90_days
+    
+  attendance_required: true
+  
+  skip_policy:
+    max_consecutive_skips: 2
+    notification_on_skip: true
+
+--- 1.7 Internal Services ---
+appointment
+patient
+provider
+appointment\service.go
+patient\service.go
+provider\service.go
+
+--- 1.8 Kubernetes Manifests ---
+deployment.yaml
+service.yaml
+
+=== ANALYSIS ===
+MedBook is a Go-based healthcare microservices platform with:
+- 3 microservices: patient-service, provider-service, appointment-service  
+- gRPC + HTTP APIs (Gin framework)
+- PostgreSQL database for patient PHI
+- Kubernetes deployment manifests
+- Existing SQUAD configuration with 7 agents (4 standard + 3 custom healthcare agents)
+- Custom ceremonies: weekly HIPAA review, sprint planning, daily standup, retrospective, monthly audit
+- Quality gates: pre-commit PHI scan, code review compliance, pre-merge verification
