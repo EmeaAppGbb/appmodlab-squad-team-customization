@@ -1,0 +1,26 @@
+=== STEP 5: CONFIGURE CUSTOM CEREMONIES ===
+Date: 2026-04-16 19:35:48
+
+--- Command ---
+gh copilot -- -p "Update ceremonies.md to add healthcare-specific custom ceremonies..." --allow-all-tools --yolo
+
+--- Output ---
+GH Copilot CLI analyzed:
+- Existing .squad/ceremonies.md (2 ceremonies: Design Review, Retrospective)
+- Existing .squad/ceremonies/ceremonies.yml (detailed ceremony configs)
+- Templates in .squad/ceremonies/templates/
+
+Updated: .squad/ceremonies.md (+66 lines)
+
+Ceremonies now include 5 total:
+1. Design Review (existing) - auto-triggered for multi-agent shared-system tasks
+2. Retrospective (existing) - auto-triggered on build/test failures
+3. Security Review (NEW) - auto-triggered before any PR touching internal/patient/ 
+   or proto/, with PHI exposure review, encryption check, and audit logging 
+   validation by hipaa-auditor
+4. HIPAA Sprint Compliance Check (NEW) - biweekly scheduled ceremony summarizing 
+   findings, tracking remediation, and generating compliance scorecard
+5. Terminology Standup (NEW) - weekly ceremony where terminology agent reviews 
+   new medical field names, ICD-10 codes, and CPT codes
+
+Tokens: 185.0k input, 1.9k output, 155.9k cached
