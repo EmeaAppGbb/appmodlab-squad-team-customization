@@ -11,7 +11,7 @@ modernizationTools: []
 agenticTools: ["SQUAD"]
 tags: ["healthcare", "HIPAA", "custom-agents", "compliance", "agent-customization"]
 extensions: ["github.copilot"]
-thumbnail: ""
+thumbnail: "https://raw.githubusercontent.com/EmeaAppGbb/appmodlab-squad-team-customization/main/assets/thumbnail-gpt-image.png"
 video: ""
 version: "1.0.0"
 ---
